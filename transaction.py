@@ -1,3 +1,5 @@
+"""This is where transactions on the blockchain are defined."""
+
 from collections import OrderedDict
 
 from utility.printable import Printable
