@@ -147,7 +147,10 @@ class Blockchain:
         reward_transaction = Transaction('MINING', self.hosting_node, '', MINING_REWARD)
         copied_transactions = self.__open_transactions[:]
         copied_transactions.append(reward_transaction)
-        block = Block(len(self.__chain), hashed_block, copied_transactions, proof) 
+        block = Block(len(self.__chain), hashed_block, copied_transactions, proof)
+        for tx in block.transactions:
+            if not Wallet.verify_transaction(tx):
+                return False
         self.__chain.append(block)
         self.__open_transactions = []
         self.save_data()
