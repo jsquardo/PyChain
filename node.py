@@ -9,7 +9,8 @@ class Node:
     def __init__(self):
         #(self.wallet.public_key = str(uuid4())
         self.wallet = Wallet()
-        self.blockchain = None
+        self.wallet.create_keys()
+        self.blockchain = Blockchain(self.wallet.public_key)
         
 
     # Gets the transaction value
@@ -41,13 +42,15 @@ class Node:
             print('4: Check Transaction validity')
             print('5: Create Wallet')
             print('6: Load Wallet')
+            print('7: Save Keys')
             print('q: Quit')
             user_choice = self.get_user_choice()
             if user_choice == '1':
                 tx_data = self.get_transaction_value()
                 recipient, amount = tx_data
                 # Add the transaction amount to the blockchain
-                if self.blockchain.add_transaction(recipient,self.wallet.public_key, amount=amount):
+                signature = self.wallet.sign_transaction(self.wallet.public_key, recipient, amount)
+                if self.blockchain.add_transaction(recipient,self.wallet.public_key, signature, amount=amount):
                     print('Added Transaction!')
                 else:
                     print('Transaction Failed!')
@@ -66,16 +69,19 @@ class Node:
                 self.wallet.create_keys()
                 self.blockchain = Blockchain(self.wallet.public_key)
             elif user_choice == '6':
-                pass
+                self.wallet.load_keys()
+                self.blockchain = Blockchain(self.wallet.public_key)
+            elif user_choice == '7':
+                self.wallet.saved_keys()
             elif user_choice == 'q':
                 # This will lead to the loop to exist because it's running condition
                 waiting_for_input = False
             else:
                 print('Input was invalid. Pease pick a value from the list!')
-            if not Verification.verify_chain(self.blockchain.chain):
-                self.print_blockchain_elements()
-                print('Invalid blockchain!')
-                break
+                if not Verification.verify_chain(self.blockchain.chain):
+                    self.print_blockchain_elements()
+                    print('Invalid blockchain!')
+                    break
             print('Balance of {}: {:6.2f}'.format(self.wallet.public_key, self.blockchain.get_balance()))
         else: 
             print('User Left!')

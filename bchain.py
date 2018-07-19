@@ -113,7 +113,7 @@ class Blockchain:
 
 
     # Adds a new value and also grabs the last blockchain value
-    def add_transaction(self, recipient, sender, amount=1.0):
+    def add_transaction(self, recipient, sender, signature,  amount=1.0):
         """ Append a new value as well as the last blockchain value """
         # transaction = {
         #     'sender': sender,
